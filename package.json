@@ -1,0 +1,31 @@
+{
+  "name": "rikkabot",
+  "version": "1.0.0",
+  "description": "A Telegram bot that tries to become Rikka",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf lib && node_modules/.bin/tsc",
+    "start": "rm -rf lib && node_modules/.bin/tsc && node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PeterCxy/Rikkabot.git"
+  },
+  "author": "PeterCxy",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/PeterCxy/Rikkabot/issues"
+  },
+  "homepage": "https://github.com/PeterCxy/Rikkabot#readme",
+  "dependencies": {
+    "request": "^2.79.0",
+    "rxjs": "^5.0.0-rc.4"
+  },
+  "devDependencies": {
+    "@types/es6-shim": "^0.31.32",
+    "@types/node": "^6.0.49",
+    "@types/request": "0.0.33",
+    "typescript": "^2.0.10"
+  }
+}
