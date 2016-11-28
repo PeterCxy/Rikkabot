@@ -2,3 +2,4 @@ npm-debug.log
 token.json
 lib
 node_modules
+data/statistics.json

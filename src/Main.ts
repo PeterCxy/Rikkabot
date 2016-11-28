@@ -1,5 +1,6 @@
 import { Telegram } from "./api/Telegram"
 import { Observable } from "rxjs/Rx"
+import { StickerBot } from "./StickerBot"
 
 setImmediate(() => {
   let {token, botName} = require("../token.json")
@@ -11,7 +12,7 @@ function msgLoop(tg: Telegram, offset: number = 0) {
     .flatMap((updates) => Observable.from(updates))
     .map((update) => {
       if (update.message != null) {
-
+        StickerBot.processMessage(update.message)
       }
       return update.update_id
     })
