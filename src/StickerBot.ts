@@ -1,6 +1,9 @@
+import * as fs from "fs"
 import { Telegram } from "./api/Telegram"
 
 const RIKKA = "RikkaW"
+const STAT_FILE = "./data/statistics.json"
+const SAVE_INTERVAL = 60 * 1000
 
 interface Stat {
   total: number
@@ -13,6 +16,17 @@ interface StickerSet {
 let statistics: Stat = {
   total: 0,
   stickers: {}
+}
+
+if (fs.existsSync(STAT_FILE)) {
+  statistics = JSON.parse(fs.readFileSync(STAT_FILE, "utf8"))
+  setTimeout(saveLoop, SAVE_INTERVAL)
+}
+
+function saveLoop() {
+  fs.writeFile(STAT_FILE, JSON.stringify(statistics), () => {
+    setTimeout(saveLoop, SAVE_INTERVAL)
+  })
 }
 
 export namespace StickerBot {
@@ -29,11 +43,10 @@ export namespace StickerBot {
     if (message.from.username === RIKKA) {
       if (message.sticker != null) {
         statistics.total++
-        if (statistics[message.sticker.file_id] == null) {
-          statistics[message.sticker.file_id] = 0
+        if (statistics.stickers[message.sticker.file_id] == null) {
+          statistics.stickers[message.sticker.file_id] = 0
         }
-        statistics[message.sticker.file_id]++
-        // TODO: Write to file
+        statistics.stickers[message.sticker.file_id]++
       }
     } else {
       // Activate by some threshold algorithm
