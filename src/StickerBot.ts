@@ -4,6 +4,7 @@ import { Telegram } from "./api/Telegram"
 const RIKKA = "RikkaW"
 const STAT_FILE = "./data/statistics.json"
 const SAVE_INTERVAL = 60 * 1000
+const THRESHOLD = 400
 
 interface Stat {
   total: number
@@ -13,10 +14,17 @@ interface StickerSet {
   [key: string]: number
 }
 
+// Record the activation level for each group
+// If threshold reached, send a sticker and reset it to 0
+interface GroupStatus {
+  [key: number]: number
+}
+
 let statistics: Stat = {
   total: 0,
   stickers: {}
 }
+let groupStatus: GroupStatus = {}
 
 if (fs.existsSync(STAT_FILE)) {
   statistics = JSON.parse(fs.readFileSync(STAT_FILE, "utf8"))
@@ -49,7 +57,13 @@ export namespace StickerBot {
         statistics.stickers[message.sticker.file_id]++
       }
     } else {
-      // Activate by some threshold algorithm
+      if (message.text != null) {
+        if (groupStatus[message.chat.id] == null) {
+          groupStatus[message.chat.id] = 0
+        }
+        groupStatus[message.chat.id] += message.text.length
+      }
+      // TODO: Send a random sticker if threshold reached.
     }
   }
 }
