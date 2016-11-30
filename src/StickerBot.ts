@@ -29,8 +29,9 @@ let groupStatus: GroupStatus = {}
 
 if (fs.existsSync(STAT_FILE)) {
   statistics = JSON.parse(fs.readFileSync(STAT_FILE, "utf8"))
-  setTimeout(saveLoop, SAVE_INTERVAL)
 }
+
+setTimeout(saveLoop, SAVE_INTERVAL)
 
 function saveLoop() {
   fs.writeFile(STAT_FILE, JSON.stringify(statistics), () => {
