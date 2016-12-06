@@ -12,7 +12,7 @@ function msgLoop(tg: Telegram, offset: number = 0) {
     .flatMap((updates) => Observable.from(updates))
     .map((update) => {
       if (update.message != null) {
-        StickerBot.processMessage(update.message)
+        StickerBot.processMessage(tg, update.message)
       }
       return update.update_id
     })

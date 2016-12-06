@@ -27,10 +27,25 @@ export class Telegram {
   }
 
   /*
+   * Send POST
+   */
+  private post<T>(method: string, form: string): Observable<T> {
+    return Http.post<T>(this.getUrl(method), form)
+  }
+
+  /*
    * Get a sequence of new updates
    */
   @get({ timeout: 300 }, "offset")
   getUpdates(offset?: number): Observable<Telegram.Update[]> {
+    return null
+  }
+
+  /*
+   * Rikka sends Stickers
+   */
+  @post("chat_id", "sticker")
+  sendSticker(chat_id: number, sticker: string): Observable<Telegram.Message> {
     return null
   }
 }
@@ -66,6 +81,7 @@ interface QS {
   // Define the query string type
   [key: string]: any
 }
+type FORM = QS
 
 function get(...paramNames: (string | QS)[]): MethodDecorator {
   let defaultQs: QS = {}
@@ -81,7 +97,27 @@ function get(...paramNames: (string | QS)[]): MethodDecorator {
           qs[<string>key] = params[index]
         }
       })
-      return this.get(propertyKey, qs) // Hack so that we can call private methods
+      return this.get(propertyKey, qs)
+    }
+    return descriptor
+  }
+}
+
+function post(...paramNames: (string | FORM)[]): MethodDecorator {
+  let defaultForm: FORM = {}
+  if (paramNames.length > 0 && typeof paramNames[0] != "string") {
+    defaultForm = <FORM> paramNames[0]
+    paramNames.splice(0, 1)
+  }
+  return (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) => {
+    descriptor.value = function (...params: any[]) {
+      let form: FORM = Object.assign({}, defaultForm)
+      paramNames.forEach((key, index) => {
+        if (index < params.length) {
+          form[<string>key] = params[index]
+        }
+      })
+      return this.get(propertyKey, form)
     }
     return descriptor
   }

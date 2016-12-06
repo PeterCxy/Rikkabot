@@ -1,11 +1,12 @@
 import * as fs from "fs"
 import { Telegram } from "./api/Telegram"
+import { Observable, Observer } from "rxjs/Rx"
 
 const RIKKA = "RikkaW"
 const TESTER = process.env.RIKKA_BOT_DEBUG_USER
 const STAT_FILE = "./data/statistics.json"
 const SAVE_INTERVAL = 60 * 1000
-const THRESHOLD = 400
+const THRESHOLD = TESTER != null ? 400 : 20
 
 interface Stat {
   total: number
@@ -39,8 +40,25 @@ function saveLoop() {
   })
 }
 
+function chooseSticker(): Observable<string> {
+  let randNum = Math.random() * statistics.total
+  let sum = 0
+  return Observable.create((observer: Observer<string>) => {
+    Object.keys(statistics.stickers).forEach((key) => {
+      if (sum >= randNum) return
+      sum += statistics.stickers[key]
+      if (sum >= randNum) {
+        observer.next(key)
+        observer.complete()
+      }
+    })
+
+    if (sum < randNum) observer.error(new Error("No sticker chosen"))
+  })
+}
+
 export namespace StickerBot {
-  export function processMessage(message: Telegram.Message) {
+  export function processMessage(tg: Telegram, message: Telegram.Message) {
     if (message.from == null) {
       return
     }
@@ -65,7 +83,13 @@ export namespace StickerBot {
         }
         groupStatus[message.chat.id] += message.text.length
       }
-      // TODO: Send a random sticker if threshold reached.
+
+      if (groupStatus[message.chat.id] >= THRESHOLD) {
+        groupStatus[message.chat.id] = 0
+        chooseSticker()
+          .flatMap((sticker) => tg.sendSticker(message.chat.id, sticker))
+          .subscribe(null, (err) => console.log(err))
+      }
     }
   }
 }

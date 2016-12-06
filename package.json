@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf lib && node_modules/.bin/tsc",
-    "start": "rm -rf lib && node_modules/.bin/tsc && node index.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
