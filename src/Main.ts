@@ -8,6 +8,7 @@ setImmediate(() => {
 })
 
 function msgLoop(tg: Telegram, offset: number = 0) {
+  let hadMessage = false
   tg.getUpdates(offset)
     .flatMap((updates) => Observable.from(updates))
     .map((update) => {
@@ -18,9 +19,14 @@ function msgLoop(tg: Telegram, offset: number = 0) {
     })
     .takeLast(1)
     .subscribe((id) => {
+      hadMessage = true
       setImmediate(() => msgLoop(tg, id + 1))
     }, (err) => {
       console.log(err)
       setImmediate(() => msgLoop(tg, offset))
+    }, () => {
+      if (!hadMessage) {
+        setImmediate(() => msgLoop(tg, offset))
+      }
     })
 }
