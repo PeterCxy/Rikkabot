@@ -6,7 +6,7 @@ const RIKKA = "RikkaW"
 const TESTER = process.env.RIKKA_BOT_DEBUG_USER
 const STAT_FILE = "./data/statistics.json"
 const SAVE_INTERVAL = 60 * 1000
-const THRESHOLD = TESTER != null ? 400 : 20
+const THRESHOLD = (TESTER != null && TESTER.trim().length > 0) ? 200 : 20
 
 interface Stat {
   total: number
