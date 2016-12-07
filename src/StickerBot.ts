@@ -78,21 +78,20 @@ export namespace StickerBot {
         }
         statistics.stickers[message.sticker.file_id]++
       }
-    } else {
-      if (message.text != null) {
-        if (groupStatus[message.chat.id] == null) {
-          groupStatus[message.chat.id] = 0
-        }
-        groupStatus[message.chat.id] += message.text.length
-      }
-
-      if (groupStatus[message.chat.id] >= THRESHOLD) {
+    }
+    if (message.text != null) {
+      if (groupStatus[message.chat.id] == null) {
         groupStatus[message.chat.id] = 0
-        chooseSticker()
-          .delay(Math.random() * DELAY_RANGE * 2 + DELAY_BASE - DELAY_RANGE)
-          .flatMap((sticker) => tg.sendSticker(message.chat.id, sticker))
-          .subscribe(null, (err) => console.log(err))
       }
+      groupStatus[message.chat.id] += message.text.length
+    }
+
+    if (groupStatus[message.chat.id] >= THRESHOLD) {
+      groupStatus[message.chat.id] = 0
+      chooseSticker()
+        .delay(Math.random() * DELAY_RANGE * 2 + DELAY_BASE - DELAY_RANGE)
+        .flatMap((sticker) => tg.sendSticker(message.chat.id, sticker))
+        .subscribe(null, (err) => console.log(err))
     }
   }
 }
