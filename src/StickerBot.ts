@@ -7,6 +7,8 @@ const TESTER = process.env.RIKKA_BOT_DEBUG_USER
 const STAT_FILE = "./data/statistics.json"
 const SAVE_INTERVAL = 60 * 1000
 const THRESHOLD = 200
+const DELAY_BASE = 1000
+const DELAY_RANGE = 400
 
 interface Stat {
   total: number
@@ -87,6 +89,7 @@ export namespace StickerBot {
       if (groupStatus[message.chat.id] >= THRESHOLD) {
         groupStatus[message.chat.id] = 0
         chooseSticker()
+          .delay(Math.random() * DELAY_RANGE * 2 + DELAY_BASE - DELAY_RANGE)
           .flatMap((sticker) => tg.sendSticker(message.chat.id, sticker))
           .subscribe(null, (err) => console.log(err))
       }
