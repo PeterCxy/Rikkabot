@@ -20,13 +20,13 @@ function msgLoop(tg: Telegram, offset: number = 0) {
     .takeLast(1)
     .subscribe((id) => {
       hadMessage = true
-      setImmediate(() => msgLoop(tg, id + 1))
+      setTimeout(() => msgLoop(tg, id + 1), 100)
     }, (err) => {
       console.log(err)
-      setImmediate(() => msgLoop(tg, offset))
+      setTimeout(() => msgLoop(tg, offset), 1000)
     }, () => {
       if (!hadMessage) {
-        setImmediate(() => msgLoop(tg, offset))
+        setTimeout(() => msgLoop(tg, offset), 1000)
       }
     })
 }
