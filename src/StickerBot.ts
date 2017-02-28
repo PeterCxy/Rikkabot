@@ -61,7 +61,7 @@ function chooseSticker(): Observable<string> {
 
 export namespace StickerBot {
   export function processMessage(tg: Telegram, message: Telegram.Message) {
-    if (message.date < Date.now() - 60 * 1000) {
+    if (message.date < Date.now() / 1000 - 60) {
       return
     }
     if (message.from == null) {

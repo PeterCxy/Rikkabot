@@ -26,7 +26,7 @@ function msgLoop(tg: Telegram, offset: number = 0) {
       setTimeout(() => msgLoop(tg, offset), 1000)
     }, () => {
       if (!hadMessage) {
-        setTimeout(() => msgLoop(tg, offset), 1000)
+        setTimeout(() => msgLoop(tg, offset), 100)
       }
     })
 }
